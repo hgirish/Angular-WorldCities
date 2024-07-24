@@ -7,6 +7,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   imports: [
     BrowserModule,
     //HttpClientModule, // deperecated, use provideHttpClient instead
-    AppRoutingModule
+    AppRoutingModule,
+    MatButtonModule,
+    MatIconModule,
+      MatToolbarModule,
+
   ],
   providers: [provideHttpClient(), provideAnimationsAsync()],
   bootstrap: [AppComponent]
