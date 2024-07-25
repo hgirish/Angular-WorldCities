@@ -47,4 +47,5 @@ public class City
     /// The country related to this city
     /// </summary>
     public Country? Country { get; set; }
+    #endregion
 }
