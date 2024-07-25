@@ -1,6 +1,9 @@
-@WorldCities.Server_HostAddress = http://localhost:5282
+@WorldCities.Server_HostAddress = https://localhost:40443
 
-GET {{WorldCities.Server_HostAddress}}/weatherforecast/
+###
+GET https://localhost:40443/api/cities/1
 Accept: application/json
 
 ###
+GET https://localhost:40443/api/countries/1
+Accept: application/json
