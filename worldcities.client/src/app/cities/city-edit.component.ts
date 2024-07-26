@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { City } from './city';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Country } from '../countries/country';
 
 @Component({
   selector: 'app-city-edit',
@@ -20,6 +21,14 @@ export class CityEditComponent implements OnInit {
   // the city object to edit
   city?: City;
 
+  // the city object id, as fetched from the active route:
+  // it's null when we're adding a new city,
+  // and not null when we're editing an existing one.
+  id?: number;
+
+  // the countries array for the select
+  countries?: Country[];
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -30,50 +39,107 @@ export class CityEditComponent implements OnInit {
     this.form = new FormGroup({
       name: new FormControl(''),
       lat: new FormControl(''),
-      lon: new FormControl('')
+      lon: new FormControl(''),
+      countryId: new FormControl('')
     });
 
     this.loadData();
   }
 
   loadData() {
+    // Load countries
+    this.loadCountries();
+
     // retrieve the ID from the 'id' parameter
     var idParam = this.activatedRoute.snapshot.paramMap.get('id');
-    var id = idParam ? +idParam : 0;
+    this.id = idParam ? +idParam : 0;
+   
+    if (this.id) {
+      // EDIT MODE
 
-    // fetch the city from the server
-    var url = environment.baseUrl + 'api/Cities/' + id;
-    this.http.get<City>(url).subscribe({
-      next: (result) => {
-        this.city = result;
-        this.title = 'Edit - ' + this.city.name;
+      // fetch the city from the server
+      var url = environment.baseUrl + 'api/Cities/' + this.id;
+      this.http.get<City>(url).subscribe({
+        next: (result) => {
+          this.city = result;
+          this.title = 'Edit - ' + this.city.name;
 
-        // update the form with the city value
-        this.form.patchValue(this.city);
-      },
-      error: (error) => console.error(error)
-    });
+          // update the form with the city value
+          this.form.patchValue(this.city);
+        },
+        error: (error) => console.error(error)
+      });
+    }
+    else {
+      // ADD NEW MODE
+
+      this.title = "Create a new City";
+
+    }
+
+    
   }
 
   onSubmit() {
-    var city = this.city;
+    var city = (this.id) ? this.city : <City>{};
     if (city) {
       city.name = this.form.controls['name'].value;
       city.lat = +this.form.controls['lat'].value;
       city.lon = +this.form.controls['lon'].value;
 
-      var url = environment.baseUrl + 'api/cities/' + city.id;
-      this.http
-        .put<City>(url, city)
-        .subscribe({
-          next: (result) => {
-            console.log("City " + city!.id + " has been updated.");
+      if (this.id) {
+        // EDTI MODE
 
-            // go back to the cities view
-            this.router.navigate(['/cities']);
-          },
-          error: (err) => console.error(err)
-        })
+        var url = environment.baseUrl + 'api/cities/' + city.id;
+        this.http
+          .put<City>(url, city)
+          .subscribe({
+            next: (result) => {
+              console.log("City " + city!.id + " has been updated.");
+
+              // go back to the cities view
+              this.router.navigate(['/cities']);
+            },
+            error: (err) => console.error(err)
+          })
+
+      } else {
+        // ADD NEW MODE
+        var url = environment.baseUrl + 'api/cities';
+        this.http
+          .post<City>(url, city)
+          .subscribe({
+            next: (result) => {
+              console.log("City " + result.id + " has been created");
+
+              // go back to cities view
+              this.router.navigate(['/cities']);
+            },
+            error: (err) => console.error(err)
+          });
+      }
+
+    
+
+
     }
+  }
+
+  loadCountries() {
+    // fetch all the countries from the server
+    var url = environment.baseUrl + 'api/Countries';
+    var params = new HttpParams()
+      .set("pageIndex", "0")
+      .set("pageSize", "9999")
+      .set("sortColumn", "name");
+
+    this.http
+      .get<any>(url, { params })
+      .subscribe({
+        next: (result) => {
+          this.countries = result.data;
+        },
+        error: (err) => console.error(err)
+      })
   }
 }

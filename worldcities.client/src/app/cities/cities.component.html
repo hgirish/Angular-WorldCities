@@ -2,6 +2,11 @@
 <p>Here's a list of cities: feel free to play with it.</p>
 <p *ngIf="!cities"><em>Loading...</em></p>
 
+<button mat-flat-button color="primary"
+        class="btn-add" *ngIf="cities" [routerLink]="['/city']">
+  Add a new city
+</button>
+
 <mat-form-field [hidden]="!cities">
   <input matInput #filter (keyup)="loadData(filter.value)"
          placeholder="Filter by name (or part of it)..." />
