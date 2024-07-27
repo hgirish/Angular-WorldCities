@@ -8,6 +8,7 @@ namespace WorldCities.Server.Data.Models;
 [Index(nameof(Name))]
 [Index(nameof(Lat))]
 [Index(nameof(Lon))]
+[Index(nameof(Name), nameof(Lat), nameof(Lon), nameof(CountryId),IsUnique =true)]
 public class City
 {
     #region Properties
