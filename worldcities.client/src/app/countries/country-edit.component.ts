@@ -1,19 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Country } from './country';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { count, map, Observable } from 'rxjs';
+import { BaseFormComponent } from '../base-form.component';
 
 @Component({
   selector: 'app-country-edit',
   templateUrl: './country-edit.component.html',
   styleUrl: './country-edit.component.scss'
 })
-export class CountryEditComponent {
-  title?: string;
-  form!: FormGroup;
+export class CountryEditComponent
+extends BaseFormComponent
+  implements OnInit {
+
+
+  title?: string;  
   country?: Country;
   id?: number;
   countries?: Country[];
@@ -23,7 +27,9 @@ export class CountryEditComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private http: HttpClient
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
