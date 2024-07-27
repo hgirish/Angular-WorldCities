@@ -43,9 +43,7 @@ public class SeedController : ControllerBase
         // define how many rows we want to process
         var nEndRow = worksheet.Dimension.End.Row;
         var nEndColumn = worksheet.Dimension.End.Column;
-        // initialize the record counters
-       // var numberOfCountriesAdded = 0;
-        var numberOfCitiesAdded = 0;
+     
 
         // create a lookup dictionary
         // containing all the countries already existing
@@ -53,42 +51,34 @@ public class SeedController : ControllerBase
         var countriesByName = _context.Countries
             .AsNoTracking()
             .ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+
         HashSet<CountrySet> countries = ExtractCountries(worksheet, nEndRow, nEndColumn);
         Console.WriteLine($"Country set count: {countries.Count}");
 
-        int numberOfCountriesAdded =  await InsertIntoDatabase( countriesByName, countries);
-        HashSet<CitySet> citySets = new HashSet<CitySet>();
+        int numberOfCountriesAdded = await InsertCountriesIntoDb(countriesByName, countries);
         
-        for (int nRow = 2; nRow <= nEndRow; nRow++)
-        {
-            var row = worksheet.Cells[
-                nRow, 1, nRow, nEndColumn
-                ];
-
-            var name = row[nRow, 1].GetValue<string>();
-            var lat = row[nRow, 3].GetValue<decimal>();
-            var lon = row[nRow, 4].GetValue<decimal>();
-            var countryName = row[nRow, 5].GetValue<string>();
-            var countryId = countriesByName[countryName].Id;
-            citySets.Add(new CitySet
-            {
-                CountryId = countryId,
-                Lat = lat,
-                Lon = lon,
-                Name = name
-            });
-        }
+        HashSet<CitySet> citySets = ExtractCities(worksheet, nEndRow, nEndColumn, countriesByName);
         Console.WriteLine($"citySets.Count {citySets.Count}");
-        // create a lookup dictionary
-        // containing all the cities already existing
-        // into the Database (it will be empty on first run)
+        
+        var numberOfCitiesAdded = await InsertCitiesIntoDb( citySets);
+
+        return new JsonResult(new
+        {
+            Cities = numberOfCitiesAdded,
+            Countries = numberOfCountriesAdded
+        });
+    }
+
+    private async Task<int> InsertCitiesIntoDb( HashSet<CitySet> citySets)
+    {
+        int numberOfCitiesAdded = 0;
         var cities = _context.Cities
-            .AsNoTracking()
-            .ToDictionary(x => (
-            Name: x.Name,
-            Lat: x.Lat,
-            Lon: x.Lon,
-            CountryId: x.CountryId));
+                    .AsNoTracking()
+                    .ToDictionary(x => (
+                    Name: x.Name,
+                    Lat: x.Lat,
+                    Lon: x.Lon,
+                    CountryId: x.CountryId));
 
         foreach (var item in citySets)
         {
@@ -118,14 +108,34 @@ public class SeedController : ControllerBase
             await _context.SaveChangesAsync();
         }
 
+        return numberOfCitiesAdded;
+    }
 
+    private static HashSet<CitySet> ExtractCities(ExcelWorksheet worksheet, int nEndRow, int nEndColumn, Dictionary<string, Country> countriesByName)
+    {
+        HashSet<CitySet> citySets = new HashSet<CitySet>();
 
-
-        return new JsonResult(new
+        for (int nRow = 2; nRow <= nEndRow; nRow++)
         {
-            Cities = numberOfCitiesAdded,
-            Countries = numberOfCountriesAdded
-        });
+            var row = worksheet.Cells[
+                nRow, 1, nRow, nEndColumn
+                ];
+
+            var name = row[nRow, 1].GetValue<string>();
+            var lat = row[nRow, 3].GetValue<decimal>();
+            var lon = row[nRow, 4].GetValue<decimal>();
+            var countryName = row[nRow, 5].GetValue<string>();
+            var countryId = countriesByName[countryName].Id;
+            citySets.Add(new CitySet
+            {
+                CountryId = countryId,
+                Lat = lat,
+                Lon = lon,
+                Name = name
+            });
+        }
+
+        return citySets;
     }
 
     private static HashSet<CountrySet> ExtractCountries(ExcelWorksheet worksheet, int nEndRow, int nEndColumn)
@@ -151,7 +161,7 @@ public class SeedController : ControllerBase
         return countries;
     }
 
-    private async Task<int> InsertIntoDatabase( Dictionary<string, Country> countriesByName, HashSet<CountrySet> countries)
+    private async Task<int> InsertCountriesIntoDb( Dictionary<string, Country> countriesByName, HashSet<CountrySet> countries)
     {
         int numberOfCountriesAdded = 0;
         foreach (var item in countries)
