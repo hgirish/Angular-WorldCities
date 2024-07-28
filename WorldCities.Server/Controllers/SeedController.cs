@@ -5,11 +5,12 @@ using OfficeOpenXml;
 using Microsoft.EntityFrameworkCore;
 using WorldCities.Server.Data.Models;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WorldCities.Server.Controllers;
 
+[Authorize(Roles = "Administrator")]
 [Route("api/[controller]/[action]")]
 [ApiController]
 public class SeedController : ControllerBase
