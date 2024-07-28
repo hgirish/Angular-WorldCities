@@ -90,9 +90,9 @@ describe('CitiesComponent', () => {
   })
 
   it('should contain a table with a list of one or more cities', () => {
-    let table = fixture.nativeElement.querySelector('table.mat-mdc-table');
+    let table = fixture.nativeElement.querySelector('table.cities-table');
 
-    let tableRows = table.querySelectorAll('tr.mat-mdc-row');
+    let tableRows = table.querySelectorAll('tr.cities-row');
    
     expect(tableRows.length).toEqual(3);
   })
