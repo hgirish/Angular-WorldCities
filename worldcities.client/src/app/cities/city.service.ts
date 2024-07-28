@@ -10,7 +10,7 @@ import { Country } from '../countries/country';
 })
 export class CityService
 extends BaseService<City> {
-  override getData(
+   getData(
     pageIndex: number,
     pageSize: number,
     sortColumn: string,

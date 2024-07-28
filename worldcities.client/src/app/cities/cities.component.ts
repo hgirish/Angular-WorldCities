@@ -68,6 +68,7 @@ export class CitiesComponent implements OnInit {
     )
       .subscribe({
         next: (result) => {
+          console.log('result', result);
           this.paginator.length = result.totalCount;
           this.paginator.pageIndex = result.pageIndex;
           this.paginator.pageSize = result.pageSize;

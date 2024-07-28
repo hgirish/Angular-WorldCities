@@ -14,7 +14,7 @@
 
 <table mat-table
        [dataSource]="cities"
-       class="mat-elevation-z8"
+       class="mat-elevation-z8 cities-table"
        [hidden]="!cities"
        matSort (matSortChange)="loadData()"
        [matSortActive]="defaultSortColumn"
@@ -55,7 +55,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr class="cities-row" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
 <!-- Pagination directive -->
