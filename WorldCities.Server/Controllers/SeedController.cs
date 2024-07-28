@@ -82,7 +82,66 @@ public class SeedController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> CreateDefaultUsers()
     {
-        throw new NotImplementedException();
+        // setup the default role names
+        string role_RegisteredUser = "RegisteredUser";
+        string role_Administrator = "Administrator";
+
+        if (await _roleManager.FindByNameAsync(role_RegisteredUser) == null)
+        {
+            await _roleManager.CreateAsync(new IdentityRole(role_RegisteredUser));
+        }
+        if (await _roleManager.FindByNameAsync(role_Administrator) == null)
+        {
+            await _roleManager.CreateAsync(new IdentityRole(role_Administrator));
+        }
+
+        var addedUserList = new List<ApplicationUser>();
+
+        var email_admin = "admin@email.com";
+        if (await _userManager.FindByNameAsync(email_admin) == null)
+        {
+            var user_admin = new ApplicationUser
+            {
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = email_admin,
+                Email = email_admin,
+            };
+            await _userManager.CreateAsync(user_admin, _configuration["DefaultPasswords:Administrator"]);
+            await _userManager.AddToRoleAsync(user_admin, role_RegisteredUser);
+            await _userManager.AddToRoleAsync(user_admin, role_Administrator);
+            user_admin.EmailConfirmed = true;
+            user_admin.LockoutEnabled = false;
+
+            addedUserList.Add(user_admin);
+        }
+        var email_user = "user@email.com";
+        if (await _userManager.FindByNameAsync(email_user) == null)
+        {
+            var user_user = new ApplicationUser
+            {
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = email_user,
+                Email = email_user,
+            };
+            await _userManager.CreateAsync(user_user, _configuration["DefaultPasswords:RegisteredUser"]);
+            await _userManager.AddToRoleAsync(user_user, role_RegisteredUser);
+            user_user.EmailConfirmed = true;
+            user_user.LockoutEnabled = false;
+
+            addedUserList.Add(user_user);
+        }
+
+        if (addedUserList.Count > 0)
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        return new JsonResult(new
+        {
+            Count = addedUserList.Count,
+            Users = addedUserList
+        });
+
     }
 
     private async Task<int> InsertCitiesIntoDb( HashSet<CitySet> citySets)
