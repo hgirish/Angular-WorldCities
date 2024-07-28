@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldCities.Server", "World
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "worldcities.client", "worldcities.client\worldcities.client.esproj", "{58BB5053-E9BB-4533-BBE8-4BBBAD6C4952}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldCities.Server.Tests", "WorldCities.Server.Tests\WorldCities.Server.Tests.csproj", "{1164733D-7C11-47F4-B31E-68DB096D1BC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{58BB5053-E9BB-4533-BBE8-4BBBAD6C4952}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58BB5053-E9BB-4533-BBE8-4BBBAD6C4952}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58BB5053-E9BB-4533-BBE8-4BBBAD6C4952}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1164733D-7C11-47F4-B31E-68DB096D1BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1164733D-7C11-47F4-B31E-68DB096D1BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1164733D-7C11-47F4-B31E-68DB096D1BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1164733D-7C11-47F4-B31E-68DB096D1BC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

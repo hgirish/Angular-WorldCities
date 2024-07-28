@@ -232,8 +232,8 @@ public class SeedController : ControllerBase
     class CountrySet
     {
         public  string Name { get; set; } = string.Empty;
-        public  string ISO2 { get; set; }
-        public  string ISO3 { get; set; }
+        public string ISO2 { get; set; } = string.Empty;
+        public string ISO3 { get; set; } = string.Empty;
         public override int GetHashCode()
         {
             return (Name + ISO2 + ISO3).GetHashCode();

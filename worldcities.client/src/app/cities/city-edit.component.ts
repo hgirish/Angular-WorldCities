@@ -31,7 +31,6 @@ extends BaseFormComponent
   // the countries array for the select
   countries?: Observable< Country[]>;
 
-  activityLog: string = '';
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -78,9 +77,9 @@ extends BaseFormComponent
     this.loadData();
   }
     log(str: string) {
-      this.activityLog += "["
+      console.log("["
         + new Date().toLocaleString()
-        + "]" + str + "<br />";
+        + "]" + str );
     }
 
   loadData() {
