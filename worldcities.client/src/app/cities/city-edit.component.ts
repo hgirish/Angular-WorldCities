@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, Validators } from '@angular/forms';
 import { City } from './city';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Country } from '../countries/country';
-import {  Observable } from 'rxjs';
-import { map} from 'rxjs/operators'
+import {  Observable, Subject, Subscription } from 'rxjs';
+import { map, takeUntil} from 'rxjs/operators'
 import { BaseFormComponent } from '../base-form.component';
 import { CityService } from './city.service';
 @Component({
@@ -14,7 +14,7 @@ import { CityService } from './city.service';
 })
 export class CityEditComponent
 extends BaseFormComponent
-  implements OnInit {
+  implements OnInit, OnDestroy {
   // the view title
   title?: string;
 
@@ -29,8 +29,9 @@ extends BaseFormComponent
   id?: number;
 
   // the countries array for the select
-  countries?: Country[];
+  countries?: Observable< Country[]>;
 
+  activityLog: string = '';
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -53,8 +54,34 @@ extends BaseFormComponent
       countryId: new FormControl('', Validators.required)
     },null,this.idDupeCity());
 
+    
+    this.form.get("name")!.valueChanges
+      .pipe(takeUntil(this.destorySubject))
+      .subscribe(() => {
+      if (!this.form.dirty) {
+        this.log("Name has been loaded with initial values");
+      } else {
+        this.log("Name was updated by the user.")
+      }
+    });
+
+    this.form.valueChanges
+      .pipe(takeUntil(this.destorySubject))
+      .subscribe(val => {
+        if (!this.form.dirty) {
+          this.log("Form has been loaded");
+        } else {
+          this.log("Form was updated by the user.")
+        }
+      });
+
     this.loadData();
   }
+    log(str: string) {
+      this.activityLog += "["
+        + new Date().toLocaleString()
+        + "]" + str + "<br />";
+    }
 
   loadData() {
     // Load countries
@@ -88,6 +115,8 @@ extends BaseFormComponent
 
     
   }
+
+
 
   onSubmit() {
     var city = (this.id) ? this.city : <City>{};
@@ -136,13 +165,9 @@ extends BaseFormComponent
   loadCountries() {
     // fetch all the countries from the server   
 
-    this.cityService.getCountries(0, 9999, "name", "asc", null, null)
-      .subscribe({
-        next: (result) => {
-          this.countries = result.data;
-        },
-        error: (err) => console.error(err)
-      })
+    this.countries = this.cityService
+      .getCountries(0, 9999, "name", "asc", null, null)
+      .pipe(map(x => x.data));
   }
 
   idDupeCity(): AsyncValidatorFn {
@@ -161,4 +186,14 @@ extends BaseFormComponent
 
     }
   }
+  private subscriptions: Subscription = new Subscription();
+  
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+    this.destorySubject.next(true)
+    this.destorySubject.complete()
+  }
+
+  private destorySubject = new Subject();
+
 }
