@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using WorldCities.Server.Data.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorldCities.Server.Controllers;
 
@@ -14,13 +15,22 @@ namespace WorldCities.Server.Controllers;
 public class SeedController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _configuration;
 
     public SeedController(ApplicationDbContext context,
-        IWebHostEnvironment env)
+        RoleManager<IdentityRole> roleManager,
+        UserManager<ApplicationUser> userManager,
+        IWebHostEnvironment env,
+        IConfiguration configuration)
     {
         _context = context;
+        _roleManager = roleManager;
+        _userManager = userManager;
         _env = env;
+        _configuration = configuration;
     }
     [HttpGet]
     public async Task<ActionResult> Import()
@@ -67,6 +77,12 @@ public class SeedController : ControllerBase
             Cities = numberOfCitiesAdded,
             Countries = numberOfCountriesAdded
         });
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> CreateDefaultUsers()
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<int> InsertCitiesIntoDb( HashSet<CitySet> citySets)

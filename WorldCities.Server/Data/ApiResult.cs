@@ -5,7 +5,6 @@ using System.Linq.Dynamic.Core;
 using System.Reflection;
 
 namespace WorldCities.Server.Data;
-
 public class ApiResult<T>
 {
     private ApiResult(
