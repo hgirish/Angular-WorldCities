@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseFormComponent } from '../base-form.component';
 import { LoginResult } from './login-result';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginRequest } from './login-request';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +19,6 @@ export class LoginComponent
   loginResult?: LoginResult;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private router: Router,
     private authService: AuthService
   ) {
