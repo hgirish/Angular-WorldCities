@@ -44,6 +44,7 @@ public class AccountController : ControllerBase
         var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
         return Ok(new ApiLoginResult 
         { 
+            Success = true,
             Message = "Login successful", 
             Token = jwt 
         });
