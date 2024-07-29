@@ -1,4 +1,4 @@
-import {  provideHttpClient } from '@angular/common/http';
+import {  HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -15,6 +15,7 @@ import { CityEditComponent } from './cities/city-edit.component';
 import { CountryEditComponent } from './countries/country-edit.component';
 import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './auth/login.component';
+import { AuthInterceptor,  } from './auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,19 @@ import { LoginComponent } from './auth/login.component';
     AngularMaterialModule,
     ReactiveFormsModule,
   ],
-  providers: [provideHttpClient(), provideAnimationsAsync()],
+  providers: [
+    provideHttpClient(
+      // DI-based interceptors must be explicitly enable
+      withInterceptorsFromDi(),
+    ),
+    provideAnimationsAsync(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi:true
+    }
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
