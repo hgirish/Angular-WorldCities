@@ -107,7 +107,7 @@ public class SeedController : ControllerBase
                 UserName = email_admin,
                 Email = email_admin,
             };
-            await _userManager.CreateAsync(user_admin, _configuration["DefaultPasswords:Administrator"]);
+            await _userManager.CreateAsync(user_admin, _configuration["DefaultPasswords:Administrator"]!);
             await _userManager.AddToRoleAsync(user_admin, role_RegisteredUser);
             await _userManager.AddToRoleAsync(user_admin, role_Administrator);
             user_admin.EmailConfirmed = true;
@@ -124,7 +124,7 @@ public class SeedController : ControllerBase
                 UserName = email_user,
                 Email = email_user,
             };
-            await _userManager.CreateAsync(user_user, _configuration["DefaultPasswords:RegisteredUser"]);
+            await _userManager.CreateAsync(user_user, _configuration["DefaultPasswords:RegisteredUser"]!);
             await _userManager.AddToRoleAsync(user_user, role_RegisteredUser);
             user_user.EmailConfirmed = true;
             user_user.LockoutEnabled = false;

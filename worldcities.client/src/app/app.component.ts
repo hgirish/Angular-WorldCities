@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from './auth/auth.service';
 
 interface WeatherForecast {
   date: string;
@@ -12,6 +13,12 @@ interface WeatherForecast {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent  {
+export class AppComponent implements OnInit  {
   title = 'World Cities';
+
+  constructor(private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.authService.init();
+  }
 }
