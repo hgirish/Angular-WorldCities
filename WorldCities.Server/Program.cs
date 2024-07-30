@@ -51,6 +51,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
 })
+    .AddApiEndpoints()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<JwtHandler>();
@@ -74,7 +75,7 @@ builder.Services.AddAuthentication(opt =>
             System.Text.Encoding.UTF8.GetBytes(
                 builder.Configuration["JwtSettings:SecurityKey"]!))
     };
-});
+}).AddBearerToken(IdentityConstants.BearerScheme);
 
 var app = builder.Build();
 
@@ -94,6 +95,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
