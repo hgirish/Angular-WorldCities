@@ -141,6 +141,7 @@ extends BaseFormComponent
           })
 
       } else {
+        city.id = 0;
         // ADD NEW MODE
         this.cityService
           .post( city)

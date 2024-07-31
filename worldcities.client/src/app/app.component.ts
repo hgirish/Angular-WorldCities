@@ -18,16 +18,19 @@ interface WeatherForecast {
 })
 export class AppComponent implements OnInit  {
   title = 'World Cities';
-
+  isProduction: boolean;
   status!: string;
-  currentState!: ConnectionState;
+  currentState?: ConnectionState;
   subscription = new Subscription();
 
   constructor(private authService: AuthService,
-    private connectionService: ConnectionService) { }
+    private connectionService: ConnectionService) {
+    this.isProduction = environment.production;
+  }
 
   ngOnInit(): void {
     this.authService.init();
+    if (environment.production)
     this.checkConnectionStatus();
   }
   
