@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiResult, BaseService } from '../base.service';
 import { City } from './city';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { Country } from '../countries/country';
 import { Apollo, gql } from 'apollo-angular';
 
@@ -11,7 +11,7 @@ import { Apollo, gql } from 'apollo-angular';
 })
 export class CityService
 extends BaseService<City> {
-   getData(
+  getData(
     pageIndex: number,
     pageSize: number,
     sortColumn: string,
@@ -19,20 +19,58 @@ extends BaseService<City> {
     filterColumn: string | null,
     filterQuery: string | null
   ): Observable<ApiResult<City>> {
-    var url = this.getUrl("api/Cities");
-    var params = new HttpParams()
-      .set("pageIndex", pageIndex.toString())
-      .set("pageSize", pageSize.toString())
-      .set("sortColumn", sortColumn)
-      .set("sortOrder", sortOrder);
 
-    if (filterColumn && filterQuery) {
-      params = params.set("filterColumn", filterColumn)
-        .set("filterQuery", filterQuery);
-    }
+    return this.apollo
+      .query({
+        query: gql`
+         query GetCitiesApiResult(
+           $pageIndex: Int!,
+           $pageSize: Int!,
+           $sortColumn: String,
+           $sortOrder: String,
+           $filterColumn: String,
+           $filterQuery: String
+         ) {
+           citiesApiResult(
+             pageIndex: $pageIndex
+             pageSize: $pageSize
+             sortColumn: $sortColumn
+             sortOrder: $sortOrder
+             filterColumn: $filterColumn
+             filterQuery: $filterQuery
+           ) {
+             data {
+               id
+               name
+               lat
+               lon
+               countryId
+               countryName
+             },
+             pageIndex
+             pageSize
+             totalCount
+             totalPages
+             sortColumn
+             sortOrder
+             filterColumn
+             filterQuery
+           }
+         }
+         `,
+        variables: {
+          pageIndex,
+          pageSize,
+          sortColumn,
+          sortOrder,
+          filterColumn,
+          filterQuery
+        }
+      }
+      ).pipe(map((result: any) => result.data.citiesApiResult));
 
-    return this.http.get<ApiResult<City>>(url, { params });
   }
+  
 
   override get(id: number): Observable<City> {
     return this.apollo

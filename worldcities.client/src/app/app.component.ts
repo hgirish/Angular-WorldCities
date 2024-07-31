@@ -35,7 +35,7 @@ export class AppComponent implements OnInit  {
     const options: ConnectionServiceOptions = {
       enableHeartbeat: true,
       heartbeatUrl: environment.baseUrl + 'api/heartbeat',
-      heartbeatInterval: 10000
+      heartbeatInterval: 30000
     };
     this.subscription.add(
       this.connectionService.monitor(options).pipe(
