@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { ApiResult, BaseService } from '../base.service';
 import { City } from './city';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Country } from '../countries/country';
+import { Apollo, gql } from 'apollo-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,28 @@ extends BaseService<City> {
   }
 
   override get(id: number): Observable<City> {
-    var url = this.getUrl("api/Cities/" + id);
-    return this.http.get<City>(url);
+    return this.apollo
+      .query({
+        query: gql`
+        query GetCitiesById($id: Int!) {
+          cities(where: {id: {eq: $id} }) {
+            nodes {
+              id
+              name
+              lat
+              lon
+              countryId
+            }
+          }
+        }
+        `,
+        variables: {
+          id
+        }
+      })
+      .pipe(map((result: any) => result.data.cities.nodes[0]));
+
+    
   }
   override put(item: City): Observable<City> {
     var url = this.getUrl("api/Cities/" + item.id);
@@ -46,7 +67,8 @@ extends BaseService<City> {
     return this.http.post<City>(url, item);
   }
 
-  constructor(http: HttpClient) { super(http); }
+  constructor(http: HttpClient,
+  private apollo: Apollo) { super(http); }
 
   getCountries(
     pageIndex: number,

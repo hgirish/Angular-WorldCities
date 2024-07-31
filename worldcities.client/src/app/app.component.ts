@@ -30,7 +30,7 @@ export class AppComponent implements OnInit  {
     this.authService.init();
     this.checkConnectionStatus();
   }
-
+  
   checkConnectionStatus(): void {
     const options: ConnectionServiceOptions = {
       enableHeartbeat: true,

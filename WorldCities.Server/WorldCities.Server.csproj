@@ -13,6 +13,9 @@
   <ItemGroup>
     <PackageReference Include="EFCore.BulkExtensions" Version="8.0.4" />
     <PackageReference Include="EPPlus" Version="4.5.3.3" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="13.9.8" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.9.8" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.9.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">

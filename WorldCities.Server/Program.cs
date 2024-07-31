@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using WorldCities.Server.Data;
+using WorldCities.Server.Data.GraphQL;
 using WorldCities.Server.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+options.AddPolicy(name: "AngularPolicy",
+cfg =>
+{
+    cfg.AllowAnyHeader();
+    cfg.AllowAnyMethod();
+    cfg.WithOrigins(builder.Configuration["AllowedCORS"]!);
+}));
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
 options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -55,6 +66,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<JwtHandler>();
+
+builder.Services.AddGraphQLServer()
+    .AddAuthorization()
+    .AddQueryType<Query>()
+    .AddMutationType<Mutation>()
+    .AddFiltering()
+    .AddSorting();
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -96,10 +114,16 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCors("AngularPolicy");
+
 app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
+app.MapGraphQL("/api/graphql");
+
+app.MapMethods("/api/heartbeat", new[] { "HEAD" }, () => Results.Ok());
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

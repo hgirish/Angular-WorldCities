@@ -1,4 +1,4 @@
-import {  HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import {  HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi, HttpClientModule } from '@angular/common/http';
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -17,6 +17,7 @@ import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './auth/login.component';
 import { AuthInterceptor,  } from './auth/auth.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    HttpClientModule,
+    GraphQLModule,
   ],
   providers: [
     provideHttpClient(
