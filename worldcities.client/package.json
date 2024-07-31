@@ -25,6 +25,7 @@
     "@angular/router": "^18.1.2",
     "@angular/service-worker": "^18.1.2",
     "jest-editor-support": "*",
+    "ng-connection-service": "^13.0.2",
     "run-script-os": "*",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.3",
